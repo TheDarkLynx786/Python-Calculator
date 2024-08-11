@@ -29,24 +29,26 @@ def calculate(expression):
         return diff
     elif "*" in expression: 
         exprsnParts = expression.split("*")
-        prod = 0
-        for i in range(len(exprsnParts)):
+        prod = float(exprsnParts[len(exprsnParts)-1])
+        for i in range(len(exprsnParts)-1):
             prod *= calculate(exprsnParts[i])
         return prod
     elif "/" in expression:
         exprsnParts = expression.split("/")
-        quotnt = 0
-        for i in range(len(exprsnParts)):
+        quotnt = float(exprsnParts[0])
+        for i in range(len(exprsnParts)-1):
             quotnt /= calculate(exprsnParts[i])
         return quotnt
     else:
-        return float(expression)   
+        print(expression)
+        return float(expression)
+        
 
 def calculationHandler(displayBuffer):
     result = calculate(displayBuffer)
     global display
-    display = tkinter.Label(window, text=result, bg='#424242', fg='#FFFFFF', padx=3, pady=3, width="20")
-    display.grid(row = 0, column = 0, columnspan=3)
+    display = tkinter.Label(window, text=result, bg='#424242', fg='#FFFFFF', pady=3, width="30")
+    display.grid(row = 0, column = 0, columnspan=4)
 
 
 def displayHandler(elem):
@@ -63,6 +65,8 @@ def displayHandler(elem):
         else:
             displayBuffer = displayBuffer[1:]
         """
+    elif txt == "C":
+        displayBuffer = ""
     elif txt == ".":
         if not "." in displayBuffer:
             displayBuffer += txt
@@ -70,8 +74,8 @@ def displayHandler(elem):
         displayBuffer += txt
 
     global display
-    display = tkinter.Label(window, text=displayBuffer, bg='#424242', fg='#FFFFFF', padx=3, pady=3, width="20")
-    display.grid(row = 0, column = 0, columnspan=3)
+    display = tkinter.Label(window, text=displayBuffer, bg='#424242', fg='#FFFFFF', pady=3, width="30")
+    display.grid(row = 0, column = 0, columnspan=4)
 
 
 def renderNumKeys(*render):    
@@ -109,23 +113,11 @@ subtraction = tkinter.Button(window, text="-", width = btnWdth, command=lambda: 
 multiplication = tkinter.Button(window, text="*", width = btnWdth, command=lambda: [displayHandler(multiplication)], bg = '#0047AB', fg="#FFFFFF")
 division = tkinter.Button(window, text="/", width = btnWdth, command=lambda: [displayHandler(division)], bg = '#0047AB', fg="#FFFFFF")
 
+clear = tkinter.Button(window, width = btnWdth, text="C", command=lambda: [displayHandler(clear)])
 equals = tkinter.Button(window, width = btnWdth, text="=", command=lambda: [calculationHandler(displayBuffer)])
 delete = tkinter.Button(window, width = btnWdth, text="<", command=lambda: [displayHandler(delete)])
 
-renderNumKeys(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,equals,delete)
+renderNumKeys(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12, delete, clear, equals)
 renderOperators(addition,subtraction,multiplication,division)
-
-
-
-
-#enter_URL = tkinter.Label(window, text="Enter Game URL:", bg='#424242', fg='#FFFFFF', pady=3, padx=3)
-#entry_URL = tkinter.Entry(window)
-#loading = tkinter.Label(window, text="Give it about 10 seconds, and your results should appear.", bg='#424242', fg='#FFFFFF', pady=3, padx=3)
-#invalid = tkinter.Label(window, text="Invalid URL Entered! Only enter the URLs of Roblox Game Pages!", bg='#424242', fg='#FFFFFF', pady=3, padx=3)
-#button_calculate = tkinter.Button(window, text="Calculate", command=begin)
-
-#Render the elements (Window 1)
-
-
 
 window.mainloop()
