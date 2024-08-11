@@ -8,8 +8,9 @@ window.title("Python Calculator")
 window.configure(bg='#002421')
 
 displayBuffer = ""
-display = tkinter.Label(window, text="", bg='#424242', fg='#FFFFFF', padx=3, pady=3, width="20")
-display.grid(row = 0, column = 0, columnspan=3)
+ansBuffer = ""
+display = tkinter.Label(window, text="Python Calculator", bg='#424242', fg='#FFFFFF', pady=3, height="3", width="35", font=("Arial", 12))
+display.grid(row = 0, column = 0, columnspan=5)
 
 def calculate(expression):
     #Follow PEMDAS; in code the priority will be reversed cus it just works that way (can't really explain it lol)
@@ -25,7 +26,7 @@ def calculate(expression):
         exprsnParts = expression.split("-")
         diff = float(exprsnParts[0])
         for i in range(len(exprsnParts)-1):
-            diff -= calculate(exprsnParts[i])
+            diff -= calculate(exprsnParts[i+1])
         return diff
     elif "*" in expression: 
         exprsnParts = expression.split("*")
@@ -37,18 +38,18 @@ def calculate(expression):
         exprsnParts = expression.split("/")
         quotnt = float(exprsnParts[0])
         for i in range(len(exprsnParts)-1):
-            quotnt /= calculate(exprsnParts[i])
+            quotnt /= calculate(exprsnParts[i+1])
         return quotnt
     else:
-        print(expression)
         return float(expression)
         
 
 def calculationHandler(displayBuffer):
     result = calculate(displayBuffer)
-    global display
-    display = tkinter.Label(window, text=result, bg='#424242', fg='#FFFFFF', pady=3, width="30")
-    display.grid(row = 0, column = 0, columnspan=4)
+    global ansBuffer
+    ansBuffer = result
+    display = tkinter.Label(window, text=result, bg='#424242', fg='#FFFFFF', pady=3, height="3", width="35", font=("Arial", 12))
+    display.grid(row = 0, column = 0, columnspan=5)
 
 
 def displayHandler(elem):
@@ -57,7 +58,6 @@ def displayHandler(elem):
     
     if txt == "<":
         displayBuffer = displayBuffer[:-1]
-        
     elif txt == "+/-":
         #Code for the +/- funcitonality, need to be addressed
         """if not "-" in displayBuffer:
@@ -67,15 +67,12 @@ def displayHandler(elem):
         """
     elif txt == "C":
         displayBuffer = ""
-    elif txt == ".":
-        if not "." in displayBuffer:
-            displayBuffer += txt
     else:
         displayBuffer += txt
 
     global display
-    display = tkinter.Label(window, text=displayBuffer, bg='#424242', fg='#FFFFFF', pady=3, width="30")
-    display.grid(row = 0, column = 0, columnspan=4)
+    display = tkinter.Label(window, text=displayBuffer, bg='#424242', fg='#FFFFFF', pady=3, height="3", width="35", font=("Arial", 12))
+    display.grid(row = 0, column = 0, columnspan=5)
 
 
 def renderNumKeys(*render):    
@@ -114,10 +111,11 @@ multiplication = tkinter.Button(window, text="*", width = btnWdth, command=lambd
 division = tkinter.Button(window, text="/", width = btnWdth, command=lambda: [displayHandler(division)], bg = '#0047AB', fg="#FFFFFF")
 
 clear = tkinter.Button(window, width = btnWdth, text="C", command=lambda: [displayHandler(clear)])
-equals = tkinter.Button(window, width = btnWdth, text="=", command=lambda: [calculationHandler(displayBuffer)])
+equals = tkinter.Button(window, width = btnWdth, text="=", command=lambda: [calculationHandler(displayBuffer)], bg = '#78601D')
 delete = tkinter.Button(window, width = btnWdth, text="<", command=lambda: [displayHandler(delete)])
+ans = tkinter.Button(window, width=btnWdth, text="Ans", command=lambda: [displayHandler(ans)])
 
-renderNumKeys(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12, delete, clear, equals)
-renderOperators(addition,subtraction,multiplication,division)
+renderNumKeys(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12, ans, clear, delete)
+renderOperators(addition,subtraction,multiplication,division, equals)
 
 window.mainloop()
