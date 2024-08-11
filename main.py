@@ -11,17 +11,58 @@ displayBuffer = ""
 display = tkinter.Label(window, text="", bg='#424242', fg='#FFFFFF', padx=3, pady=3, width="20")
 display.grid(row = 0, column = 0, columnspan=3)
 
+def calculate(expression):
+    #Follow PEMDAS; in code the priority will be reversed cus it just works that way (can't really explain it lol)
+    #I'm using recursion hehehehaw
+    
+    if "+" in expression:
+        exprsnParts = expression.split("+")
+        sum = 0
+        for i in range(len(exprsnParts)):
+            sum += calculate(exprsnParts[i])
+        return sum
+    elif "-" in expression:
+        exprsnParts = expression.split("-")
+        diff = float(exprsnParts[0])
+        for i in range(len(exprsnParts)-1):
+            diff -= calculate(exprsnParts[i])
+        return diff
+    elif "*" in expression: 
+        exprsnParts = expression.split("*")
+        prod = 0
+        for i in range(len(exprsnParts)):
+            prod *= calculate(exprsnParts[i])
+        return prod
+    elif "/" in expression:
+        exprsnParts = expression.split("/")
+        quotnt = 0
+        for i in range(len(exprsnParts)):
+            quotnt /= calculate(exprsnParts[i])
+        return quotnt
+    else:
+        return float(expression)   
+
+def calculationHandler(displayBuffer):
+    result = calculate(displayBuffer)
+    global display
+    display = tkinter.Label(window, text=result, bg='#424242', fg='#FFFFFF', padx=3, pady=3, width="20")
+    display.grid(row = 0, column = 0, columnspan=3)
+
+
 def displayHandler(elem):
     global displayBuffer
     txt = elem.cget("text")
     
     if txt == "<":
         displayBuffer = displayBuffer[:-1]
+        
     elif txt == "+/-":
-        if not "-" in displayBuffer:
+        #Code for the +/- funcitonality, need to be addressed
+        """if not "-" in displayBuffer:
             displayBuffer = "-" + displayBuffer
         else:
             displayBuffer = displayBuffer[1:]
+        """
     elif txt == ".":
         if not "." in displayBuffer:
             displayBuffer += txt
@@ -33,14 +74,18 @@ def displayHandler(elem):
     display.grid(row = 0, column = 0, columnspan=3)
 
 
-def renderElems(*render):    
+def renderNumKeys(*render):    
     #Render Number Buttons 
-    for i in range(len(render)):      
+    for i in range(len(render)-4):      
         for l in range(3):
             if(i*3 + l >= len(render)):
                 break
             render[(i*3 + l)].grid(row=i+1, column=l, padx=3,pady=3)
 
+def renderOperators(*render):
+    #Render Operator Buttons
+    for i in range(len(render)):
+        render[i].grid(row=i+1, column = 4, padx=3, pady=3)
 
 
 #Number Buttons
@@ -59,11 +104,16 @@ b11 = tkinter.Button(window, text="0", width = btnWdth, command=lambda: [display
 b12 = tkinter.Button(window, text=".", width = btnWdth, command=lambda: [displayHandler(b12)])
 
 #Operators and Functions
+addition = tkinter.Button(window, text="+", width = btnWdth, command=lambda: [displayHandler(addition)], bg = '#0047AB', fg="#FFFFFF")
+subtraction = tkinter.Button(window, text="-", width = btnWdth, command=lambda: [displayHandler(subtraction)], bg = '#0047AB', fg="#FFFFFF")
+multiplication = tkinter.Button(window, text="*", width = btnWdth, command=lambda: [displayHandler(multiplication)], bg = '#0047AB', fg="#FFFFFF")
+division = tkinter.Button(window, text="/", width = btnWdth, command=lambda: [displayHandler(division)], bg = '#0047AB', fg="#FFFFFF")
 
-equals = tkinter.Button(window, width = btnWdth, text="=")
+equals = tkinter.Button(window, width = btnWdth, text="=", command=lambda: [calculationHandler(displayBuffer)])
 delete = tkinter.Button(window, width = btnWdth, text="<", command=lambda: [displayHandler(delete)])
 
-renderElems(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,equals,delete)
+renderNumKeys(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,equals,delete)
+renderOperators(addition,subtraction,multiplication,division)
 
 
 
