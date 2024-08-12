@@ -23,8 +23,15 @@ def calculate(expression):
             sum += calculate(exprsnParts[i])
         return sum
     elif "-" in expression:
+        
         exprsnParts = expression.split("-")
+        if(expression[0] == "-"):
+            exprsnParts.pop(0)
+            exprsnParts[0] = "-" + exprsnParts[0]
+        
         diff = float(exprsnParts[0])
+        if(len(exprsnParts) == 1):
+            return diff
         for i in range(len(exprsnParts)-1):
             diff -= calculate(exprsnParts[i+1])
         return diff
@@ -45,9 +52,12 @@ def calculate(expression):
         
 
 def calculationHandler(displayBuffer):
-    result = calculate(displayBuffer)
+    try:
+        result = calculate(displayBuffer)
+    except:
+        result = "Err!"
     global ansBuffer
-    ansBuffer = result
+    ansBuffer = str(result)
     display = tkinter.Label(window, text=result, bg='#424242', fg='#FFFFFF', pady=3, height="3", width="35", font=("Arial", 12))
     display.grid(row = 0, column = 0, columnspan=5)
 
@@ -56,15 +66,15 @@ def displayHandler(elem):
     global displayBuffer
     txt = elem.cget("text")
     
-    if txt == "<":
+    if txt == "Del":
         displayBuffer = displayBuffer[:-1]
+    elif txt == "Ans":
+        displayBuffer += ansBuffer
     elif txt == "+/-":
-        #Code for the +/- funcitonality, need to be addressed
-        """if not "-" in displayBuffer:
+        if not "-" in displayBuffer:
             displayBuffer = "-" + displayBuffer
         else:
             displayBuffer = displayBuffer[1:]
-        """
     elif txt == "C":
         displayBuffer = ""
     else:
@@ -90,7 +100,8 @@ def renderOperators(*render):
 
 
 #Number Buttons
-btnWdth = 6
+btnWdth = 8
+font = ("Arial", )
 b1 = tkinter.Button(window, text="1", width = btnWdth, command=lambda: [displayHandler(b1)])
 b2 = tkinter.Button(window, text="2", width = btnWdth, command=lambda: [displayHandler(b2)])
 b3 = tkinter.Button(window, text="3", width = btnWdth, command=lambda: [displayHandler(b3)])
@@ -112,10 +123,10 @@ division = tkinter.Button(window, text="/", width = btnWdth, command=lambda: [di
 
 clear = tkinter.Button(window, width = btnWdth, text="C", command=lambda: [displayHandler(clear)])
 equals = tkinter.Button(window, width = btnWdth, text="=", command=lambda: [calculationHandler(displayBuffer)], bg = '#78601D')
-delete = tkinter.Button(window, width = btnWdth, text="<", command=lambda: [displayHandler(delete)])
+delete = tkinter.Button(window, width = btnWdth, text="Del", command=lambda: [displayHandler(delete)])
 ans = tkinter.Button(window, width=btnWdth, text="Ans", command=lambda: [displayHandler(ans)])
 
 renderNumKeys(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12, ans, clear, delete)
-renderOperators(addition,subtraction,multiplication,division, equals)
+renderOperators(addition, subtraction, multiplication, division, equals)
 
 window.mainloop()
